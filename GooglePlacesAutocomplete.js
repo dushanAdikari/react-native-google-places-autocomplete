@@ -533,7 +533,7 @@ export default class GooglePlacesAutocomplete extends Component {
       >
         {this._renderDescription(rowData)}
       </Text>
-      {rowData.description == true && 
+      {rowData.description  && 
       <View style={styles.photo}>
           <Image
             style={styles.photo}
@@ -541,7 +541,7 @@ export default class GooglePlacesAutocomplete extends Component {
           />
       </View>}
       </View>
-      {rowData.description == true && 
+      {rowData.description  && 
       <View style={styles.submit}>
       <Image
             style={styles.submit}
