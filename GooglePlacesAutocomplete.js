@@ -533,19 +533,21 @@ export default class GooglePlacesAutocomplete extends Component {
       >
         {this._renderDescription(rowData)}
       </Text>
+      {rowData.description == true && 
       <View style={styles.photo}>
           <Image
             style={styles.photo}
             source={require('./images/location_pin_icn.png')}
           />
+      </View>}
       </View>
-      </View>
+      {rowData.description == true && 
       <View style={styles.submit}>
       <Image
             style={styles.submit}
             source={require('./images/check.png')}
           />
-      </View>
+      </View>}
       </View> : <Text style={[{paddingRight: 5}, defaultStyles.description, this.props.styles.description, rowData.isPredefinedPlace ? this.props.styles.predefinedPlacesDescription : {}]}
         numberOfLines={1}
       >
