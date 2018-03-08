@@ -52,7 +52,9 @@ const defaultStyles = {
     backgroundColor: '#FFFFFF',
   },
   powered: {},
-  listView: {},
+  listView: {
+    // flex: 1,
+  },
   row: {
     padding: 13,
     height: 44,
@@ -64,6 +66,7 @@ const defaultStyles = {
   },
   description: {},
   loader: {
+    // flex: 1,
     flexDirection: 'row',
     justifyContent: 'flex-end',
     height: 20,
@@ -124,8 +127,8 @@ export default class GooglePlacesAutocomplete extends Component {
   componentDidMount() {
     // This will load the default value's search results after the view has
     // been rendered
-    this._onChangeText(this.state.text);
     this._isMounted = true;
+    this._onChangeText(this.state.text);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -491,7 +494,7 @@ export default class GooglePlacesAutocomplete extends Component {
 
     this.setState({
       text: text,
-      listViewDisplayed: this._isMounted || this.props.autoFocus,
+      listViewDisplayed: true,
     });
   }
 
@@ -517,16 +520,39 @@ export default class GooglePlacesAutocomplete extends Component {
   }
 
   _renderRowData = (rowData) => {
+    console.log('row data----',rowData)
     if (this.props.renderRow) {
       return this.props.renderRow(rowData);
     }
 
     return (
-      <Text style={[{flex: 1}, this.props.suppressDefaultStyles ? {} : defaultStyles.description, this.props.styles.description, rowData.isPredefinedPlace ? this.props.styles.predefinedPlacesDescription : {}]}
+      rowData.isPredefinedPlace === true ? <View style={styles.container}>
+      <View style={{ flex: 1, flexDirection: 'row',}}>
+      <Text style={[{paddingRight: 5}, defaultStyles.description, this.props.styles.description, rowData.isPredefinedPlace ? this.props.styles.predefinedPlacesDescription : {}]}
         numberOfLines={1}
       >
         {this._renderDescription(rowData)}
       </Text>
+      <View style={styles.photo}>
+          <Image
+            style={styles.photo}
+            source={require('./images/location_pin_icn.png')}
+          />
+      </View>
+      </View>
+      <View style={styles.submit}>
+      <Image
+            style={styles.submit}
+            source={require('./images/check.png')}
+          />
+      </View>
+      </View> : <Text style={[{paddingRight: 5}, defaultStyles.description, this.props.styles.description, rowData.isPredefinedPlace ? this.props.styles.predefinedPlacesDescription : {}]}
+        numberOfLines={1}
+      >
+        {this._renderDescription(rowData)}
+      </Text>
+      
+      
     );
   }
 
@@ -541,7 +567,7 @@ export default class GooglePlacesAutocomplete extends Component {
   _renderLoader = (rowData) => {
     if (rowData.isLoading === true) {
       return (
-        <View style={[this.props.suppressDefaultStyles ? {} : defaultStyles.loader, this.props.styles.loader]}>
+        <View style={[defaultStyles.loader, this.props.styles.loader]}>
           {this._getRowLoader()}
         </View>
       );
@@ -564,7 +590,7 @@ export default class GooglePlacesAutocomplete extends Component {
           onPress={() => this._onPress(rowData)}
           underlayColor={this.props.listUnderlayColor || "#c8c7cc"}
         >
-          <View style={[this.props.suppressDefaultStyles ? {} : defaultStyles.row, this.props.styles.row, rowData.isPredefinedPlace ? this.props.styles.specialItemRow : {}]}>
+          <View style={[defaultStyles.row, this.props.styles.row, rowData.isPredefinedPlace ? this.props.styles.specialItemRow : {}]}>
             {this._renderRowData(rowData)}
             {this._renderLoader(rowData)}
           </View>
@@ -581,7 +607,7 @@ export default class GooglePlacesAutocomplete extends Component {
     return (
       <View
         key={ `${sectionID}-${rowID}` }
-        style={[this.props.suppressDefaultStyles ? {} : defaultStyles.separator, this.props.styles.separator]} />
+        style={[defaultStyles.separator, this.props.styles.separator]} />
     );
   }
 
@@ -602,10 +628,10 @@ export default class GooglePlacesAutocomplete extends Component {
 
     return (
       <View
-        style={[this.props.suppressDefaultStyles ? {} : defaultStyles.row, defaultStyles.poweredContainer, this.props.styles.poweredContainer]}
+        style={[defaultStyles.row, defaultStyles.poweredContainer, this.props.styles.poweredContainer]}
       >
         <Image
-          style={[this.props.suppressDefaultStyles ? {} : defaultStyles.powered, this.props.styles.powered]}
+          style={[defaultStyles.powered, this.props.styles.powered]}
           resizeMode={Image.resizeMode.contain}
           source={require('./images/powered_by_google_on_white.png')}
         />
@@ -649,7 +675,7 @@ export default class GooglePlacesAutocomplete extends Component {
     if ((this.state.text !== '' || this.props.predefinedPlaces.length || this.props.currentLocation === true) && this.state.listViewDisplayed === true) {
       return (
         <FlatList
-          style={[this.props.suppressDefaultStyles ? {} : defaultStyles.listView, this.props.styles.listView]}
+          style={[defaultStyles.listView, this.props.styles.listView]}
           data={this.state.dataSource}
           keyExtractor={keyGenerator}
           extraData={[this.state.dataSource, this.props]}
@@ -670,19 +696,18 @@ export default class GooglePlacesAutocomplete extends Component {
     } = this.props.textInputProps;
     return (
       <View
-        style={[this.props.suppressDefaultStyles ? {} : defaultStyles.container, this.props.styles.container]}
-        pointerEvents="box-none"
+        style={[defaultStyles.container, this.props.styles.container]}
       >
         {!this.props.textInputHide &&
           <View
-            style={[this.props.suppressDefaultStyles ? {} : defaultStyles.textInputContainer, this.props.styles.textInputContainer]}
+            style={[defaultStyles.textInputContainer, this.props.styles.textInputContainer]}
           >
             {this._renderLeftButton()}
             <TextInput
               ref="textInput"
               returnKeyType={this.props.returnKeyType}
               autoFocus={this.props.autoFocus}
-              style={[this.props.suppressDefaultStyles ? {} : defaultStyles.textInput, this.props.styles.textInput]}
+              style={[defaultStyles.textInput, this.props.styles.textInput]}
               value={this.state.text}
               placeholder={this.props.placeholder}
 
@@ -702,6 +727,31 @@ export default class GooglePlacesAutocomplete extends Component {
     );
   }
 }
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 0,
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#FFFFFF',
+  },
+  photo: {
+    height: 17,
+    width: 12,
+    paddingRight: 5,
+    // borderRadius: 20,
+  },
+  submit: {
+    position: 'absolute',
+    right: 0,
+    // left: Dimensions.get('window').width - 100,
+    // left: 135,
+    // marginRight: 100,
+    width: 20,
+    height: 20,
+  },
+})
 
 GooglePlacesAutocomplete.propTypes = {
   placeholder: PropTypes.string,
@@ -740,8 +790,7 @@ GooglePlacesAutocomplete.propTypes = {
   debounce: PropTypes.number,
   isRowScrollable: PropTypes.bool,
   text: PropTypes.string,
-  textInputHide: PropTypes.bool,
-  suppressDefaultStyles: PropTypes.bool
+  textInputHide: PropTypes.bool
 }
 GooglePlacesAutocomplete.defaultProps = {
   placeholder: 'Search',
@@ -783,8 +832,7 @@ GooglePlacesAutocomplete.defaultProps = {
   enableEmptySections: true,
   listViewDisplayed: 'auto',
   debounce: 0,
-  textInputHide: false,
-  suppressDefaultStyles: false
+  textInputHide: false
 }
 
 // this function is still present in the library to be retrocompatible with version < 1.1.0
